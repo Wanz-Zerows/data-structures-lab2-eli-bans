@@ -1,3 +1,7 @@
+/**
+ * Generic class that can store information about a data entry.
+ * @param <D>
+ */
 public class DataEntry<D> {
   private String unique;
   private D data; //data can be any datatype
@@ -17,7 +21,16 @@ public class DataEntry<D> {
         return this.data;
     }
 
-    public long getTime() {
+    public long getTS() {
         return this.time;
+    }
+
+    @Override
+    public String toString() {
+        return "DataEntry{" +
+                "unique='" + this.unique + '\'' +
+                ", data=" + this.data +
+                ", time=" + this.time +
+                '}';
     }
 }

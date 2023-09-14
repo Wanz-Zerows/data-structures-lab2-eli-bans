@@ -1,37 +1,46 @@
+import java.sql.Timestamp;
 import java.util.HashMap;
 
+/**
+ * a generic data storage system that can store and manage various types
+ * of data.
+ * @param <E>
+ */
 public class DataStorage<E> {
-    private HashMap<String,DataEntry<E>> storage; //hashMap that takes the unique identfier : the entire data entry
+    private HashMap<String,DataEntry<E>> store; //hashMap that takes the unique identifier : the entire data entry
 
     public DataStorage(){
-        this.storage = new HashMap<String,DataEntry<E>>(); //hashmap to store all data entries. Initially empty
+        this.store = new HashMap<String,DataEntry<E>>();
     }
-    void addEntry(DataEntry<E> entry){//adds a data entry to the storage
-        this.storage.put(entry.getUnique(), entry);
+    public void addEntry(DataEntry<E> entry){ //adds a data entry to the store
+        this.store.put(entry.getUnique(), entry);
     }
-    DataEntry<E> retrieveEntry(String identifier){//Retrieves a data entry based on its identifier
-        return this.storage.get(identifier);
+    public DataEntry<E> retrieveEntry(String identifier){ //Retrieves a data entry based on its identifier
+        return this.store.get(identifier);
     }
-    int getEntryCount(){// Returns the total number of data entries.
-        return storage.size();
+    public int getEntryCount(){ // Returns the total number of data entries.
+        return store.size();
     }
-    double getAverageTimeStamp(){//Calculates and returns the average timestamp of all data entries
-        //but maybe this average just means the most common time
-        if (storage.isEmpty()) return 0.00;
-        long totalTS = 0;
-        for (DataEntry<E> entry: storage.values() ) {
-            totalTS+=entry.getTime();
+    public Timestamp getAverageTimeStamp(){ //Calculates and returns the average timestamp of all data entries
+        if (store.isEmpty()) return new Timestamp(0) ;
+        long milliseconds = 0;
+        for (DataEntry<E> entry: store.values() ) {
+            milliseconds +=entry.getTS();
         }
-        return totalTS/this.storage.size();
+        long totMilli = milliseconds /this.store.size();
+
+        Timestamp ts = new Timestamp(totMilli);
+        return  ts;
     }
-    void listAllEntries(){//print out all storage entries
-        for (DataEntry<E> entry: storage.values() ) {
+
+    public void listAllEntries(){ //print out all storage entries
+        for (DataEntry<E> entry: store.values() ) {
             System.out.println(entry);
         }
     }
 
-    void removeEntry(String identifier){
-        storage.remove(identifier);
+    public void removeEntry(String identifier){ //remove data entry from store
+        store.remove(identifier);
     }
 
 
@@ -39,10 +48,13 @@ public class DataStorage<E> {
 
      DataStorage<String> storage1 = new DataStorage<>(); //declaring and instantiation a storage object
 
+        //create timestamp
+        Timestamp timestamp = new Timestamp(System.currentTimeMillis());
+
         //creating data entries for tests
-      DataEntry<String>  test = new DataEntry<String>("PH-K", "FirstData", System.currentTimeMillis());
-      DataEntry<Integer> test2 = new DataEntry<Integer>("AJP-5",2, System.currentTimeMillis());
-      DataEntry<String> test3 = new DataEntry<String>("CA-L","Tirddata",System.currentTimeMillis());
+      DataEntry<String>  test = new DataEntry<String>("PH-K", "FirstData", timestamp.getTime());
+      DataEntry<Integer> test2 = new DataEntry<Integer>("AJP-5",2, timestamp.getTime());
+      DataEntry<String> test3 = new DataEntry<String>("CA-L","Tirddata",timestamp.getTime());
 
       //testing the add method
         storage1.addEntry(test);
@@ -54,10 +66,15 @@ public class DataStorage<E> {
         //testing the getAverageTimeStamp method
         System.out.println("Average Timestamp: " + storage1.getAverageTimeStamp());
 
-        //have a few more tests to do mabr3
+        //retrieve data
+        System.out.println(storage1.retrieveEntry("PH-K")+" was retrieved");
 
+        //list all entries
+        storage1.listAllEntries();
+
+        //list entry count
+        System.out.println("There are currently "+ storage1.getEntryCount() +" entrie(s)");
 
     }
-
-
+    
 }
